@@ -1,0 +1,8 @@
+*.sh
+*.o
+*.out
+*.bin
+*.elf
+*.pdf
+*.map
+build/
