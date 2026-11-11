@@ -5,4 +5,6 @@
 *.elf
 *.pdf
 *.map
+*.clangd
+*.txt
 build/
