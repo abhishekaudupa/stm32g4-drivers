@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <utils/utils.h>
 #include <drivers/gpio/gpio.h>
+#include <drivers/special/special.h>
 
 #define LD2 5
 
@@ -19,12 +20,11 @@ __inline void prep_user_led() {
 
 int main(void) {
 
-    prep_user_led();
+    volatile uint32_t reg __unused;
 
-    while (1) {
-        for (uint32_t j = 0; j < 100000; ++j);
-        TOG_BIT(GPIOA->GPIO_ODR, LD2);
-    }
+    enable_exceptions();
+    disable_irq();
+    disable_exceptions();
 
     return 0;
 }

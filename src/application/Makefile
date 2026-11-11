@@ -7,10 +7,11 @@ DEP := $(OBJ:.o=.d)
 all: $(OBJ)
 
 $(BUILD_DIR)/%.o: %.c
+	@echo "Building main program from files: $<"
 	@mkdir -p $(BUILD_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(CLEAN_TARGETS)
+	rm -rf $(CLEAN_TARGETS)
 
 -include $(DEP)
