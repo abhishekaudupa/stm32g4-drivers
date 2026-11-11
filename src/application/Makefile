@@ -8,8 +8,8 @@ all: $(TARGET)
 
 $(TARGET): $(SRC)
 	@mkdir -p $(BUILD_DIR)
-	@echo "Building main program"
-	@$(CC) $(CFLAGS) -c $< -o $@
+	@echo "Building main program using files: $(SRC)"
+	@$(CC) $(CFLAGS) -c $(SRC) -o $@
 
 clean:
 	rm -rf $(CLEAN_TARGETS)

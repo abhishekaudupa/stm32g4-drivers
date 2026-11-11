@@ -8,8 +8,8 @@ all: $(TARGET)
 
 $(TARGET): $(SRC)
 	@mkdir -p $(BUILD_DIR)
-	@echo "Building $(MODULE) driver"
-	@$(CC) $(CFLAGS) -c $< -o $@
+	@echo "Building $(MODULE) driver using files: $(SRC)"
+	@$(CC) $(CFLAGS) -c $(SRC) -o $@
 
 clean:
 	rm -rf $(CLEAN_TARGETS)

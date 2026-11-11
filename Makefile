@@ -20,9 +20,10 @@ BIN				:= final.bin
 
 all: build_objs $(ELF) $(BIN)
 
-$(ELF): $(wildcard $(BUILD_DIR)/*.o)
+build_objs:
 	@$(MAKE) -C $(SRC_DIR)
-	@echo
+
+$(ELF): $(wildcard $(BUILD_DIR)/*.o)
 	@echo "Building firmware ELF"
 	@$(CC) $(LDFLAGS) $(BUILD_DIR)/*.o -o $@
 
@@ -30,17 +31,22 @@ $(BIN): $(ELF)
 	@echo "Building firmware binary"
 	@arm-none-eabi-objcopy -O binary $< $@
 
-build_objs:
-	@$(MAKE) -C $(SRC_DIR)
-
 dump: $(ELF)
 	arm-none-eabi-objdump -dsh $<
 
 flash: $(ELF)
-	openocd -f interface/stlink.cfg -f target/stm32g4x.cfg -c "program $(ELF) verify; reset; exit"
+	@$(MAKE) build_objs
+	@$(MAKE) $(ELF)
+	@echo
+	@echo "Flashing firmware to the board"
+	@openocd -f interface/stlink.cfg -f target/stm32g4x.cfg -c "program $(ELF) verify; reset; exit"
 
 debug: $(ELF)
-	./debug.sh $(ELF)
+	@$(MAKE) build_objs
+	@$(MAKE) $(ELF)
+	@echo
+	@echo "Flashing and starting GDB debugger"
+	@./debug.sh $(ELF)
 
 clean:
 	@$(MAKE) -C $(SRC_DIR) clean
