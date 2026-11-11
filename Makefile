@@ -20,7 +20,7 @@ BIN				:= final.bin
 
 all: build_objs $(ELF) $(BIN)
 
-$(ELF):
+$(ELF): $(wildcard $(BUILD_DIR)/*.o)
 	@$(MAKE) -C $(SRC_DIR)
 	@echo
 	@echo "Building firmware ELF"
