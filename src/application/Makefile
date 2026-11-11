@@ -1,17 +1,16 @@
-MODULE 	:= main
-TARGET 	:= $(BUILD_DIR)/$(MODULE).o
-SRC 	:= $(MODULE).c
+SRC := $(wildcard *.c)
+OBJ := $(patsubst %.c,$(BUILD_DIR)/%.o,$(SRC))
+DEP := $(OBJ:.o=.d)
 
 .PHONY: all clean
 
-all: $(TARGET)
+all: $(OBJ)
 
-$(TARGET): $(SRC)
+$(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(BUILD_DIR)
-	@echo "Building main program using files: $(SRC)"
-	@$(CC) $(CFLAGS) -c $(SRC) -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(CLEAN_TARGETS)
+	rm -f $(CLEAN_TARGETS)
 
--include $(BUILD_DIR)/$(MODULE).d
+-include $(DEP)

@@ -5,7 +5,7 @@ INCLUDE_DIRS	:= -I$(SRC_DIR)
 
 CC 				:= arm-none-eabi-gcc
 CFLAGS	 		:= $(INCLUDE_DIRS) -MMD -MP -mcpu=cortex-m4 -mthumb -ffreestanding -O2 -g -Wall
-CLEAN_TARGETS	:= *.o *.out *.elf *.bin *.map $(BUILD_DIR)
+CLEAN_TARGETS	:= *.o *.d *.out *.elf *.bin *.map $(BUILD_DIR)
 
 export PROJECT_ROOT BUILD_DIR SRC_DIR CC CFLAGS CLEAN_TARGETS
 
