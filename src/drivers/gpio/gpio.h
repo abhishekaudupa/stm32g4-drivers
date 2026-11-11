@@ -2,8 +2,8 @@
 #define __GPIO_H__
 
 #include <stdint.h>
-#include "../misc/utils.h"
-#include "../rcc/rcc.h"
+#include <utils/utils.h>
+#include <drivers/rcc/rcc.h>
 
 typedef struct __packed {
     uint32_t GPIO_MODER;

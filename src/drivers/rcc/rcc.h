@@ -2,7 +2,7 @@
 #define __RCC_H__
 
 #include <stdint.h>
-#include "../misc/utils.h"
+#include <utils/utils.h>
 
 typedef struct __packed {
     uint32_t RCC_CR;

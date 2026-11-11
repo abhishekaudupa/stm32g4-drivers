@@ -1,6 +1,6 @@
 #include <stdint.h>
-#include "../drivers/misc/utils.h"
-#include "../drivers/gpio/gpio.h"
+#include <utils/utils.h>
+#include <drivers/gpio/gpio.h>
 
 #define LD2 5
 

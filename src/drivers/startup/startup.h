@@ -2,7 +2,7 @@
 #define __HANDLER_H__
 
 #include <stdint.h>
-#include "../misc/utils.h"
+#include <utils/utils.h>
 
 #define STM32G_INT_COUNT        102
 #define SRAM_START              0x20000000U

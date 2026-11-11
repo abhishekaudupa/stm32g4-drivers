@@ -13,3 +13,5 @@ $(TARGET): $(SRC)
 
 clean:
 	rm -rf $(CLEAN_TARGETS)
+
+-include $(BUILD_DIR)/$(MODULE).d

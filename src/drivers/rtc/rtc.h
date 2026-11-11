@@ -2,7 +2,7 @@
 #define __RTC_H__
 
 #include <stdint.h>
-#include "utils.h"
+#include <utils/utils.h>
 
 typedef struct __packed {
     uint32_t RTC_TR;

@@ -1,5 +1,5 @@
 MODULE 	:= $(notdir $(CURDIR))
-SRC 	:= $(MODULE).c $(MODULE).h
+SRC 	:= $(MODULE).c
 TARGET 	:= $(BUILD_DIR)/$(MODULE).o
 
 .PHONY: all clean
@@ -13,3 +13,5 @@ $(TARGET): $(SRC)
 
 clean:
 	rm -rf $(CLEAN_TARGETS)
+
+-include $(BUILD_DIR)/$(MODULE).d
