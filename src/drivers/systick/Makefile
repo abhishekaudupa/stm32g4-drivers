@@ -1,17 +1,17 @@
-MODULE 	:= $(notdir $(CURDIR))
-SRC 	:= $(MODULE).c
-TARGET 	:= $(BUILD_DIR)/$(MODULE).o
+SRC := $(wildcard *.c)
+OBJ := $(patsubst %.c,$(BUILD_DIR)/%.o,$(SRC))
+DEP := $(OBJ:.o=.d)
 
 .PHONY: all clean
 
-all: $(TARGET)
+all: $(OBJ)
 
-$(TARGET): $(SRC)
+$(BUILD_DIR)/%.o: %.c
+	@echo "Building main program from files: $<"
 	@mkdir -p $(BUILD_DIR)
-	@echo "Building $(MODULE) driver using files: $(SRC)"
-	@$(CC) $(CFLAGS) -c $(SRC) -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -rf $(CLEAN_TARGETS)
 
--include $(BUILD_DIR)/$(MODULE).d
+-include $(DEP)

@@ -7,14 +7,14 @@ CC 				:= arm-none-eabi-gcc
 CFLAGS	 		:= $(INCLUDE_DIRS) -MMD -MP -mcpu=cortex-m4 -mthumb -ffreestanding -O2 -g -Wall
 CLEAN_TARGETS	:= *.o *.d *.out *.elf *.bin *.map $(BUILD_DIR)
 
-export PROJECT_ROOT BUILD_DIR SRC_DIR CC CFLAGS CLEAN_TARGETS
-
 MAKEFLAGS		+= --no-print-directory
 LINKER_SCRIPT	:= stm32g491re.ld
 LINKER_MAP		:= final.map
 LDFLAGS 		:= -Wl,-T $(SRC_DIR)/$(LINKER_SCRIPT) -Wl,-Map=$(BUILD_DIR)/$(LINKER_MAP) -nostdlib
 ELF				:= final.elf
 BIN				:= final.bin
+
+export PROJECT_ROOT BUILD_DIR SRC_DIR CC CFLAGS CLEAN_TARGETS
 
 .PHONY: all build_objs clean dump flash debug
 
