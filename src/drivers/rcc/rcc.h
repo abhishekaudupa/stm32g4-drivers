@@ -49,4 +49,70 @@ typedef struct __packed {
 
 #define RCC     ((volatile RCC*) 0X40021000)
 
+#define RCC_CR_HSEON    16
+#define RCC_CR_HSERDY   17
+#define RCC_CR_HSEBYP   18
+#define RCC_CR_HSION    8
+#define RCC_CR_HSIRDY   10
+#define RCC_CR_PLLON    24
+#define RCC_CR_PLLRDY   25
+
+typedef enum {
+    RCC_PLL_Src_HSI16   = 0x10U,
+    RCC_PLL_Src_HSE     = 0x11U
+} RCC_PLL_Src;
+
+typedef enum {
+    SysClk_Src_HSI16    = 0x01U,
+    SysClk_Src_HSE      = 0x10U,
+    SysClk_Src_PLL      = 0x11U
+} RCC_SysClk_Src;
+
+__inline void enable_rcc_hse_oscext(void) {
+    SET_BIT(RCC->RCC_CR, RCC_CR_HSEON);
+    while(!TEST_BIT(RCC->RCC_CR, RCC_CR_HSERDY));
+}
+
+__inline void disable_rcc_hse_oscext(void) {
+    CLR_BIT(RCC->RCC_CR, RCC_CR_HSEON);
+    while(TEST_BIT(RCC->RCC_CR, RCC_CR_HSERDY));
+}
+
+__inline void enable_rcc_hse_srcext(void) {
+    SET_BIT(RCC->RCC_CR, RCC_CR_HSEON);
+    SET_BIT(RCC->RCC_CR, RCC_CR_HSEBYP);
+}
+
+__inline void disable_rcc_hse_srcext(void) {
+    CLR_BIT(RCC->RCC_CR, RCC_CR_HSEON);
+}
+
+__inline void enable_rcc_hsi(void) {
+    SET_BIT(RCC->RCC_CR, RCC_CR_HSION);
+    while(!TEST_BIT(RCC->RCC_CR, RCC_CR_HSIRDY));
+}
+
+__inline void disable_rcc_hsi(void) {
+    CLR_BIT(RCC->RCC_CR, RCC_CR_HSION);
+    while(TEST_BIT(RCC->RCC_CR, RCC_CR_HSIRDY));
+}
+
+__inline void enable_rcc_pll(void) {
+    SET_BIT(RCC->RCC_CR, RCC_CR_PLLON);
+    while(!TEST_BIT(RCC->RCC_CR, RCC_CR_PLLRDY));
+}
+
+__inline void disable_rcc_pll(void) {
+    CLR_BIT(RCC->RCC_CR, RCC_CR_PLLON);
+    while(TEST_BIT(RCC->RCC_CR, RCC_CR_PLLRDY));
+}
+
+__inline void set_rcc_pll_source(const RCC_PLL_Src pll_src) {
+    MODIFY_BITS(RCC->RCC_PLLCFGR, 0, 2, pll_src);
+}
+
+__inline void set_rcc_sysclk_source(const RCC_PLL_Src sysclk_src) {
+    MODIFY_BITS(RCC->RCC_CFGR, 0, 2, sysclk_src);
+}
+
 #endif
