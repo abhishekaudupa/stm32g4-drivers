@@ -19,7 +19,7 @@
 #define SET_BIT(reg, pos)                      SET_BITS(reg, pos, 1)
 #define CLR_BIT(reg, pos)                      CLR_BITS(reg, pos, 1)
 #define TOG_BIT(reg, pos)                      TOG_BITS(reg, pos, 1)
-
+#define TEST_BIT(reg, pos)                     ((reg) & BITS((pos), 1))
 
 /* modify bitcount number of bits at pos with val */
 #define MODIFY_BITS(reg, pos, bitcount, val)   (reg = (CLR_BITS((reg), (pos), (bitcount)) | ((val) << (pos))))
