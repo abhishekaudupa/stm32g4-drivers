@@ -118,6 +118,9 @@ uint32_t sysivt[] __section(".sysivt") = {
     (uint32_t)RESVD_MEM,
     (uint32_t)RESVD_MEM,
     (uint32_t)RESVD_MEM,
+    (uint32_t)RESVD_MEM,
+    (uint32_t)RESVD_MEM,
+    (uint32_t)RESVD_MEM,
     (uint32_t)pendSV_handler,
     (uint32_t)sysTick_handler,
 };
