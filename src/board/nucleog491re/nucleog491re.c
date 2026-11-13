@@ -1,8 +1,7 @@
 #include <stdint.h>
 #include <utils/utils.h>
 #include <drivers/gpio/gpio.h>
-
-#define LD2 5
+#include <board/nucleog491re/nucleog491re.h>
 
 void prep_user_led() {
     enable_gpio('A');
