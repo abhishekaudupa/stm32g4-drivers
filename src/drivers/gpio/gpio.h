@@ -5,7 +5,7 @@
 #include <utils/utils.h>
 #include <drivers/rcc/rcc.h>
 
-typedef struct __packed {
+typedef struct {
     uint32_t GPIO_MODER;
     uint32_t GPIO_OTYPER;
     uint32_t GPIO_OSPEEDR;
@@ -68,6 +68,25 @@ typedef enum {
     GPIO_AF15 = 0xF,
 } GPIO_Alternate_Func;
 
+typedef enum {
+    GPIO_P00 = 0x0U,
+    GPIO_P01 = 0x1U,
+    GPIO_P02 = 0x2U,
+    GPIO_P03 = 0x3U,
+    GPIO_P04 = 0x4U,
+    GPIO_P05 = 0x5U,
+    GPIO_P06 = 0x6U,
+    GPIO_P07 = 0x7U,
+    GPIO_P08 = 0x8U,
+    GPIO_P09 = 0x9U,
+    GPIO_P10 = 0xAU,
+    GPIO_P11 = 0xBU,
+    GPIO_P12 = 0xCU,
+    GPIO_P13 = 0xDU,
+    GPIO_P14 = 0xEU,
+    GPIO_P15 = 0xFU,
+} GPIO_Pin;
+
 #define GPIOA                   ((volatile GPIO*)0x48000000)
 #define GPIOB                   ((volatile GPIO*)0x48000400)
 #define GPIOC                   ((volatile GPIO*)0x48000800)
@@ -79,13 +98,13 @@ typedef enum {
 #define GPIO_MODER_IWIDTH       0x2U
 #define GPIO_OTYPER_IWIDTH      0x1U
 #define GPIO_OSPEEDR_IWIDTH     0x2U
-#define GPIO_PUPDR_IWIDTH      0x2U
+#define GPIO_PUPDR_IWIDTH       0x2U
 #define GPIO_AFR_IWIDTH         0x4U
 
 #define GPIO_MODER_IOFST(pin)   ((pin) * GPIO_MODER_IWIDTH)        
 #define GPIO_OTYPER_IOFST(pin)  ((pin) * GPIO_OTYPER_IWIDTH)
 #define GPIO_OSPEEDR_IOFST(pin) ((pin) * GPIO_OSPEEDR_IWIDTH)
-#define GPIO_PUPDR_IOFST(pin)  ((pin) * GPIO_PUPDR_IWIDTH)
+#define GPIO_PUPDR_IOFST(pin)   ((pin) * GPIO_PUPDR_IWIDTH)
 #define GPIO_AFR_IOFST(pin)     ((pin) * GPIO_AFR_IWIDTH)
 
 __inline void enable_gpio(const uint8_t port) {
@@ -147,6 +166,18 @@ __inline void gpio_odr_setbit_atomic(volatile GPIO *const port, const uint8_t bi
 
 __inline void gpio_odr_resetbit_atomic(volatile GPIO *const port, const uint8_t bit) {
     SET_BIT(port->GPIO_BSRR, bit + 16U);
+}
+
+__inline void gpio_set_pin(volatile GPIO *const port, const GPIO_Pin pin) {
+    SET_BIT(port->GPIO_ODR, pin);
+}
+
+__inline void gpio_clr_pin(volatile GPIO *const port, const GPIO_Pin pin) {
+    CLR_BIT(port->GPIO_ODR, pin);
+}
+
+__inline void gpio_reset_pin(volatile GPIO *const port, const GPIO_Pin pin) {
+    SET_BIT(port->GPIO_BRR, pin);
 }
 
 #endif
