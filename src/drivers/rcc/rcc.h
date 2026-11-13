@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <utils/utils.h>
 
-typedef struct __packed {
+typedef struct {
     uint32_t RCC_CR;
     uint32_t RCC_ICSCR;
     uint32_t RCC_CFGR;
@@ -49,13 +49,24 @@ typedef struct __packed {
 
 #define RCC     ((volatile RCC*) 0X40021000)
 
-#define RCC_CR_HSEON    16
-#define RCC_CR_HSERDY   17
-#define RCC_CR_HSEBYP   18
-#define RCC_CR_HSION    8
-#define RCC_CR_HSIRDY   10
-#define RCC_CR_PLLON    24
-#define RCC_CR_PLLRDY   25
+/* RCC CR bit positions */
+#define RCC_CR_HSEON        16
+#define RCC_CR_HSERDY       17
+#define RCC_CR_HSEBYP       18
+#define RCC_CR_HSION        8
+#define RCC_CR_HSIRDY       10
+#define RCC_CR_PLLON        24
+#define RCC_CR_PLLRDY       25
+
+/* RCC PLLCFGR bit positions */
+#define RCC_PLLCFGR_PLLSRC  0
+
+/* RCC RCC_CFGR bit positions */
+#define RCC_CFGR_SYSCLK     0
+
+/* Register instr. widths */
+#define RCC_PLLSRC_IWIDTH   2
+#define RCC_SYSCLK_IWIDTH   2
 
 typedef enum {
     RCC_PLL_Src_HSI16   = 0x10U,
@@ -108,11 +119,11 @@ __inline void disable_rcc_pll(void) {
 }
 
 __inline void set_rcc_pll_source(const RCC_PLL_Src pll_src) {
-    MODIFY_BITS(RCC->RCC_PLLCFGR, 0, 2, pll_src);
+    MODIFY_BITS(RCC->RCC_PLLCFGR, RCC_PLLCFGR_PLLSRC, RCC_PLLSRC_IWIDTH, pll_src);
 }
 
 __inline void set_rcc_sysclk_source(const RCC_PLL_Src sysclk_src) {
-    MODIFY_BITS(RCC->RCC_CFGR, 0, 2, sysclk_src);
+    MODIFY_BITS(RCC->RCC_CFGR, RCC_CFGR_SYSCLK, RCC_SYSCLK_IWIDTH, sysclk_src);
 }
 
 #endif
