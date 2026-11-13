@@ -34,11 +34,11 @@ __inline void set_systick_clksrc_ahb_8(void) {
     CLR_BIT(SYSTICK->STK_CTRL, SYSTICK_CTRL_CLKSOURCE);
 }
 
-__inline void set_systick_reload_val(const uint32_t reload_val) {
+__inline void load_systick(const uint32_t reload_val) {
     MODIFY_BITS(SYSTICK->STK_LOAD, 0, 24U, reload_val);
 }
 
-__inline void reload_systick(void) {
+__inline void clear_systick(void) {
     SET_BIT(SYSTICK->STK_VAL, 0);
 }
 
