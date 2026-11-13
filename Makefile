@@ -1,12 +1,13 @@
 FINAL_MODULE	:= firmware
 PROJECT_ROOT	:= $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 BUILD_DIR 		:= $(PROJECT_ROOT)/build
+LOG_DIR			:= $(PROJECT_ROOT)/logs
 SRC_DIR			:= $(PROJECT_ROOT)/src
 INCLUDE_DIRS	:= -I$(SRC_DIR)
 
 CC 				:= arm-none-eabi-gcc
 CFLAGS	 		:= $(INCLUDE_DIRS) -MMD -MP -mcpu=cortex-m4 -mthumb -ffreestanding -O2 -g -Wall
-CLEAN_TARGETS	:= *.o *.d *.out *.elf *.bin *.map $(BUILD_DIR)
+CLEAN_TARGETS	:= *.o *.d *.out *.elf *.bin *.map *.log $(BUILD_DIR) $(LOG_DIR)
 
 MAKEFLAGS		+= --no-print-directory
 LINKER_SCRIPT	:= stm32g491re.ld
