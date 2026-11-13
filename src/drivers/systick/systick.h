@@ -23,7 +23,7 @@ __inline void enable_systick(void) {
 }
 
 __inline void enable_systick_interrupt(void) {
-    SET_BIT(SYSTICK->STK_CTRL, SYSTICK_CTRL_ENABLE);
+    SET_BIT(SYSTICK->STK_CTRL, SYSTICK_CTRL_TICKINT);
 }
 
 __inline void set_systick_clksrc_ahb(void) {
