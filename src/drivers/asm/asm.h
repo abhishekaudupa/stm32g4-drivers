@@ -1,5 +1,5 @@
-#ifndef __SPECIAL_H__
-#define __SPECIAL_H__
+#ifndef __ASM_H__
+#define __ASM_H__
 
 #include <stdint.h>
 #include <utils/utils.h>
