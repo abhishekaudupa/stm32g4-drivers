@@ -1,3 +1,4 @@
+FINAL_MODULE	:= firmware
 PROJECT_ROOT	:= $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 BUILD_DIR 		:= $(PROJECT_ROOT)/build
 SRC_DIR			:= $(PROJECT_ROOT)/src
@@ -9,10 +10,10 @@ CLEAN_TARGETS	:= *.o *.d *.out *.elf *.bin *.map $(BUILD_DIR)
 
 MAKEFLAGS		+= --no-print-directory
 LINKER_SCRIPT	:= stm32g491re.ld
-LINKER_MAP		:= final.map
+LINKER_MAP		:= $(FINAL_MODULE).map
 LDFLAGS 		:= -Wl,-T $(SRC_DIR)/$(LINKER_SCRIPT) -Wl,-Map=$(BUILD_DIR)/$(LINKER_MAP) -nostdlib
-ELF				:= final.elf
-BIN				:= final.bin
+ELF				:= $(FINAL_MODULE).elf
+BIN				:= $(FINAL_MODULE).bin
 
 export PROJECT_ROOT BUILD_DIR SRC_DIR CC CFLAGS CLEAN_TARGETS
 
