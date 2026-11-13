@@ -101,4 +101,130 @@ void DMA2_Channel8_IRQHandler(void);
 void CORDIC_IRQHandler(void);
 void FMAC_IRQHandler(void);
 
+typedef struct {
+    uint32_t NVIC_IPR0;
+    uint32_t NVIC_IPR1;
+    uint32_t NVIC_IPR2;
+    uint32_t NVIC_IPR3;
+    uint32_t NVIC_IPR4;
+    uint32_t NVIC_IPR5;
+    uint32_t NVIC_IPR6;
+    uint32_t NVIC_IPR7;
+    uint32_t NVIC_IPR8;
+    uint32_t NVIC_IPR9;
+    uint32_t NVIC_IPR10;
+    uint32_t NVIC_IPR11;
+    uint32_t NVIC_IPR12;
+    uint32_t NVIC_IPR13;
+    uint32_t NVIC_IPR14;
+    uint32_t NVIC_IPR15;
+    uint32_t NVIC_IPR16;
+    uint32_t NVIC_IPR17;
+    uint32_t NVIC_IPR18;
+    uint32_t NVIC_IPR19;
+    uint32_t NVIC_IPR20;
+    uint32_t NVIC_IPR21;
+    uint32_t NVIC_IPR22;
+    uint32_t NVIC_IPR23;
+    uint32_t NVIC_IPR24;
+    uint32_t NVIC_IPR25;
+    uint32_t NVIC_IPR26;
+    uint32_t NVIC_IPR27;
+    uint32_t NVIC_IPR28;
+    uint32_t NVIC_IPR29;
+    uint32_t NVIC_IPR30;
+    uint32_t NVIC_IPR31;
+    uint32_t NVIC_IPR32;
+    uint32_t NVIC_IPR33;
+    uint32_t NVIC_IPR34;
+    uint32_t NVIC_IPR35;
+    uint32_t NVIC_IPR36;
+    uint32_t NVIC_IPR37;
+    uint32_t NVIC_IPR38;
+    uint32_t NVIC_IPR39;
+    uint32_t NVIC_IPR40;
+    uint32_t NVIC_IPR41;
+    uint32_t NVIC_IPR42;
+    uint32_t NVIC_IPR43;
+    uint32_t NVIC_IPR44;
+    uint32_t NVIC_IPR45;
+    uint32_t NVIC_IPR46;
+    uint32_t NVIC_IPR47;
+    uint32_t NVIC_IPR48;
+    uint32_t NVIC_IPR49;
+    uint32_t NVIC_IPR50;
+    uint32_t NVIC_IPR51;
+    uint32_t NVIC_IPR52;
+    uint32_t NVIC_IPR53;
+    uint32_t NVIC_IPR54;
+    uint32_t NVIC_IPR55;
+    uint32_t NVIC_IPR56;
+    uint32_t NVIC_IPR57;
+    uint32_t NVIC_IPR58;
+    uint32_t NVIC_IPR59;
+} NVIC_IPR;
+
+typedef struct {
+    uint32_t NVIC_ISER0;
+    uint32_t NVIC_ISER1;
+    uint32_t NVIC_ISER2;
+    uint32_t NVIC_ISER3;
+    uint32_t NVIC_ISER4;
+    uint32_t NVIC_ISER5;
+    uint32_t NVIC_ISER6;
+    uint32_t NVIC_ISER7;
+} NVIC_ISER;
+
+typedef struct {
+    uint32_t NVIC_ICER0;
+    uint32_t NVIC_ICER1;
+    uint32_t NVIC_ICER2;
+    uint32_t NVIC_ICER3;
+    uint32_t NVIC_ICER4;
+    uint32_t NVIC_ICER5;
+    uint32_t NVIC_ICER6;
+    uint32_t NVIC_ICER7;
+} NVIC_ICER;
+
+typedef struct {
+    uint32_t NVIC_ISPR0;
+    uint32_t NVIC_ISPR1;
+    uint32_t NVIC_ISPR2;
+    uint32_t NVIC_ISPR3;
+    uint32_t NVIC_ISPR4;
+    uint32_t NVIC_ISPR5;
+    uint32_t NVIC_ISPR6;
+    uint32_t NVIC_ISPR7;
+} NVIC_ISPR;
+
+typedef struct {
+    uint32_t NVIC_ICPR0;
+    uint32_t NVIC_ICPR1;
+    uint32_t NVIC_ICPR2;
+    uint32_t NVIC_ICPR3;
+    uint32_t NVIC_ICPR4;
+    uint32_t NVIC_ICPR5;
+    uint32_t NVIC_ICPR6;
+    uint32_t NVIC_ICPR7;
+} NVIC_ICPR;
+
+typedef struct {
+    uint32_t NVIC_IABR0;
+    uint32_t NVIC_IABR1;
+    uint32_t NVIC_IABR2;
+    uint32_t NVIC_IABR3;
+    uint32_t NVIC_IABR4;
+    uint32_t NVIC_IABR5;
+    uint32_t NVIC_IABR6;
+    uint32_t NVIC_IABR7;
+} NVIC_IABR;
+
+#define NVIC_ISER ((volatile NVIC_ISER*) 0xE000E100)
+#define NVIC_ICER ((volatile NVIC_ICER*) 0xE000E180)
+#define NVIC_ISPR ((volatile NVIC_ISPR*) 0xE000E200)
+#define NVIC_ICPR ((volatile NVIC_ICPR*) 0xE000E280)
+#define NVIC_IABR ((volatile NVIC_IABR*) 0xE000E300)
+#define NVIC_IPR  ((volatile NVIC_IPR*)  0xE000E400)
+#define NVIC_STIR (*(volatile uint32_t*) 0xE000EF00)
+
 #endif
