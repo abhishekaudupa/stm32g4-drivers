@@ -31,6 +31,7 @@ $(ELF): $(wildcard $(BUILD_DIR)/*.o)
 $(BIN): $(ELF)
 	@echo "Building firmware binary"
 	@arm-none-eabi-objcopy -O binary $< $@
+	@echo "Firmware binary $(BIN) built succesfully. Size of binary: $$(ls -lh $@ | cut -d ' ' -f 5) bytes"
 
 dump: $(ELF)
 	arm-none-eabi-objdump -dsh $<
