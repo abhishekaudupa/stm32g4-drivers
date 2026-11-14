@@ -42,30 +42,30 @@ typedef enum {
 
 /* GPIO speed in OSPEEDR */
 typedef enum {
-    GPIO_LS = 0x0U,
-    GPIO_MS = 0x1U,
-    GPIO_HS = 0x2U,
+    GPIO_LS  = 0x0U,
+    GPIO_MS  = 0x1U,
+    GPIO_HS  = 0x2U,
     GPIO_VHS = 0x3U,
 } GPIO_Speed;
 
 /* GPIO alternte funcs in AFRH and AFRL */
 typedef enum {
-    GPIO_AF00 = 0x0,
-    GPIO_AF01 = 0x1,
-    GPIO_AF02 = 0x2,
-    GPIO_AF03 = 0x3,
-    GPIO_AF04 = 0x4,
-    GPIO_AF05 = 0x5,
-    GPIO_AF06 = 0x6,
-    GPIO_AF07 = 0x7,
-    GPIO_AF08 = 0x8,
-    GPIO_AF09 = 0x9,
-    GPIO_AF10 = 0xA,
-    GPIO_AF11 = 0xB,
-    GPIO_AF12 = 0xC,
-    GPIO_AF13 = 0xD,
-    GPIO_AF14 = 0xE,
-    GPIO_AF15 = 0xF,
+    GPIO_AF00 = 0x0U,
+    GPIO_AF01 = 0x1U,
+    GPIO_AF02 = 0x2U,
+    GPIO_AF03 = 0x3U,
+    GPIO_AF04 = 0x4U,
+    GPIO_AF05 = 0x5U,
+    GPIO_AF06 = 0x6U,
+    GPIO_AF07 = 0x7U,
+    GPIO_AF08 = 0x8U,
+    GPIO_AF09 = 0x9U,
+    GPIO_AF10 = 0xAU,
+    GPIO_AF11 = 0xBU,
+    GPIO_AF12 = 0xCU,
+    GPIO_AF13 = 0xDU,
+    GPIO_AF14 = 0xEU,
+    GPIO_AF15 = 0xFU,
 } GPIO_Alternate_Func;
 
 typedef enum {
@@ -87,25 +87,33 @@ typedef enum {
     GPIO_P15 = 0xFU,
 } GPIO_Pin;
 
-#define GPIOA                   ((volatile GPIO*)0x48000000)
-#define GPIOB                   ((volatile GPIO*)0x48000400)
-#define GPIOC                   ((volatile GPIO*)0x48000800)
-#define GPIOD                   ((volatile GPIO*)0x48000C00)
-#define GPIOE                   ((volatile GPIO*)0x48001000)
-#define GPIOF                   ((volatile GPIO*)0x48001400)
-#define GPIOG                   ((volatile GPIO*)0x48001800)
+/* GPIO registers */
+#define GPIOA                           ((volatile GPIO*)0x48000000U)
+#define GPIOB                           ((volatile GPIO*)0x48000400U)
+#define GPIOC                           ((volatile GPIO*)0x48000800U)
+#define GPIOD                           ((volatile GPIO*)0x48000C00U)
+#define GPIOE                           ((volatile GPIO*)0x48001000U)
+#define GPIOF                           ((volatile GPIO*)0x48001400U)
+#define GPIOG                           ((volatile GPIO*)0x48001800U)
 
-#define GPIO_MODER_IWIDTH       0x2U
-#define GPIO_OTYPER_IWIDTH      0x1U
-#define GPIO_OSPEEDR_IWIDTH     0x2U
-#define GPIO_PUPDR_IWIDTH       0x2U
-#define GPIO_AFR_IWIDTH         0x4U
+/* bit positions for registers */
+#define GPIO_MODER_MODE_POS(pin)        ((pin) * 2)
+#define GPIO_OSPEEDR_OSPEED_POS(pin)    ((pin) * 2)
+#define GPIO_PUPDR_PUPD_POS(pin)        ((pin) * 2)
+#define GPIO_AFR_POS(pin)               ((pin) * 4)
 
-#define GPIO_MODER_IOFST(pin)   ((pin) * GPIO_MODER_IWIDTH)        
-#define GPIO_OTYPER_IOFST(pin)  ((pin) * GPIO_OTYPER_IWIDTH)
-#define GPIO_OSPEEDR_IOFST(pin) ((pin) * GPIO_OSPEEDR_IWIDTH)
-#define GPIO_PUPDR_IOFST(pin)   ((pin) * GPIO_PUPDR_IWIDTH)
-#define GPIO_AFR_IOFST(pin)     ((pin) * GPIO_AFR_IWIDTH)
+/* bitmasks for registers */
+#define GPIO_MODER_MODE_BM(pin)         (0x3U << GPIO_MODER_MODE_POS(pin))
+#define GPIO_OSPEEDR_OSPEED_BM(pin)     (0x3U << GPIO_OSPEEDR_OSPEED_POS(pin))
+#define GPIO_PUPDR_PUPD_BM(pin)         (0x3U << GPIO_PUPDR_PUPD_POS(pin))
+#define GPIO_AFR_BM(pin)                (0xFU << GPIO_AFR_POS(pin))
+#define GPIO_OTYPER_OTYPE_BM(pin)       (0x1U << (pin))
+#define GPIO_IDR_BM(pin)                (0x1U << (pin))
+#define GPIO_ODR_BM(pin)                (0x1U << (pin))
+
+/* 
+ * GPIO register manipulation functions 
+ */
 
 __inline void enable_gpio(const uint8_t port) {
     SET_BIT(RCC->RCC_AHB2ENR, port - 'A');
@@ -118,38 +126,38 @@ __inline void disable_gpio(const uint8_t port) {
 __inline void set_gpio_mode(volatile GPIO *const port, 
         const uint8_t pin, 
         const GPIO_Mode mode) {
-    MODIFY_BITS(port->GPIO_MODER, GPIO_MODER_IOFST(pin), GPIO_MODER_IWIDTH, mode);
+    port->GPIO_MODER = (port->GPIO_MODER & ~GPIO_MODER_MODE_BM(pin)) | (mode << GPIO_MODER_MODE_POS(pin));
 }
 
 __inline void set_gpio_otype(volatile GPIO *const port, 
         const uint8_t pin, 
         const GPIO_Output_Type type) {
-    MODIFY_BITS(port->GPIO_OTYPER, GPIO_OTYPER_IOFST(pin), GPIO_OTYPER_IWIDTH, type);
+    port->GPIO_OTYPER = (port->GPIO_OTYPER & ~GPIO_OTYPER_OTYPE_BM(pin)) | (type << pin);
 }
 
 __inline void set_gpio_pupd(volatile GPIO *const port, 
         const uint8_t pin, 
         const GPIO_Push_Pull mode) {
-    MODIFY_BITS(port->GPIO_PUPDR, GPIO_PUPDR_IOFST(pin), GPIO_PUPDR_IWIDTH, mode);
+    port->GPIO_PUPDR = (port->GPIO_PUPDR & ~GPIO_PUPDR_PUPD_BM(pin)) | (mode << GPIO_PUPDR_PUPD_POS(pin));
 }
 
 __inline void set_gpio_speed(volatile GPIO *const port, 
         const uint8_t pin, 
         const GPIO_Speed speed) {
-    MODIFY_BITS(port->GPIO_OSPEEDR, GPIO_OSPEEDR_IOFST(pin), GPIO_OSPEEDR_IWIDTH, speed);
+    port->GPIO_OSPEEDR = (port->GPIO_OSPEEDR & ~GPIO_OSPEEDR_OSPEED_BM(pin)) | (speed << GPIO_OSPEEDR_OSPEED_POS(pin));
 }
 
 
 __inline void set_gpio_afrl(volatile GPIO *const port, 
         const uint8_t pin, 
         const GPIO_Alternate_Func func) {
-    MODIFY_BITS(port->GPIO_AFRL, GPIO_AFR_IOFST(pin), GPIO_AFR_IWIDTH, func);
+    port->GPIO_AFRL = (port->GPIO_AFRL & ~GPIO_AFR_BM(pin)) | (func << GPIO_AFR_POS(pin));
 }
 
 __inline void set_gpio_afrh(volatile GPIO *const port, 
         const uint8_t pin, 
         const GPIO_Alternate_Func func) {
-    MODIFY_BITS(port->GPIO_AFRH, GPIO_AFR_IOFST(pin - 8), GPIO_AFR_IWIDTH, func);
+    port->GPIO_AFRH = (port->GPIO_AFRH & ~GPIO_AFR_BM(pin - 8)) | (func << GPIO_AFR_POS(pin - 8));
 }
 
 __inline uint32_t gpio_read_odr(volatile GPIO *const port) {
@@ -160,12 +168,12 @@ __inline uint32_t gpio_read_idr(volatile GPIO *const port) {
     return port->GPIO_IDR;
 }
 
-__inline void gpio_odr_setbit_atomic(volatile GPIO *const port, const uint8_t bit) {
-    SET_BIT(port->GPIO_BSRR, bit);
+__inline void gpio_odr_setpin_atomic(volatile GPIO *const port, const uint8_t pin) {
+    SET_BIT(port->GPIO_BSRR, pin);
 }
 
-__inline void gpio_odr_resetbit_atomic(volatile GPIO *const port, const uint8_t bit) {
-    SET_BIT(port->GPIO_BSRR, bit + 16U);
+__inline void gpio_odr_resetpin_atomic(volatile GPIO *const port, const uint8_t pin) {
+    SET_BIT(port->GPIO_BSRR, pin + 16U);
 }
 
 __inline void gpio_set_pin(volatile GPIO *const port, const GPIO_Pin pin) {
@@ -174,6 +182,10 @@ __inline void gpio_set_pin(volatile GPIO *const port, const GPIO_Pin pin) {
 
 __inline void gpio_clr_pin(volatile GPIO *const port, const GPIO_Pin pin) {
     CLR_BIT(port->GPIO_ODR, pin);
+}
+
+__inline void gpio_tgl_pin(volatile GPIO *const port, const GPIO_Pin pin) {
+    TGL_BIT(port->GPIO_ODR, pin);
 }
 
 __inline void gpio_reset_pin(volatile GPIO *const port, const GPIO_Pin pin) {

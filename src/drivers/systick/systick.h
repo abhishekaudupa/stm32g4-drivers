@@ -22,43 +22,49 @@ typedef enum {
     SysTick_Clk_AHB   = 0x1U,
 } SysTick_Clksrc;
 
-#define SYSTICK ((volatile SysTick*)0xE000E010)
+#define SYSTICK                     ((volatile SysTick*)0xE000E010U)
 
-/* Systick CTRL bit positions */
-#define SYSTICK_CTRL_ENABLE     0
-#define SYSTICK_CTRL_TICKINT    1
-#define SYSTICK_CTRL_CLKSOURCE  2
-#define SYSTICK_CTRL_COUNTFLAG  16
+/* Systick register bit positions */
+#define SYSTICK_CTRL_ENABLE_POS     0
+#define SYSTICK_CTRL_TICKINT_POS    1
+#define SYSTICK_CTRL_CLKSRC_POS     2
+#define SYSTICK_CTRL_COUNTFLAG_POS  16
+#define SYSTICK_LOAD_POS            0
+#define SYSTICK_VAL_POS             0
 
-/* Systic LOAD and VAL bit position and width */
-#define SYSTICK_LOAD            0
-#define SYSTICK_WIDTH           24U
+/* Systick register bitmasks */
+#define SYSTICK_CTRL_ENABLE_BM      (0X1U << SYSTICK_CTRL_ENABLE_POS)
+#define SYSTICK_CTRL_TICKINT_BM     (0X1U << SYSTICK_CTRL_TICKINT_POS)
+#define SYSTICK_CTRL_CLKSRC_BM      (0X1U << SYSTICK_CTRL_CLKSRC_POS)
+#define SYSTICK_CTRL_COUNTFLAG_BM   (0X1U << SYSTICK_CTRL_COUNTFLAG_POS)
+#define SYSTICK_LOAD_BM             (0XFFFFFF << SYSTICK_LOAD_POS)
+#define SYSTICK_VAL_BM              (0xFFFFFF << SYSTICK_VAL_POS)
 
 void start_systick(const Systick_Config config);
 void stop_systick(void);
 
 __inline void enable_systick_interrupt(void) {
-    SET_BIT(SYSTICK->STK_CTRL, SYSTICK_CTRL_TICKINT);
+    SET_BIT(SYSTICK->STK_CTRL, SYSTICK_CTRL_TICKINT_POS);
 }
 
 __inline void disable_systick_interrupt(void) {
-    CLR_BIT(SYSTICK->STK_CTRL, SYSTICK_CTRL_TICKINT);
+    CLR_BIT(SYSTICK->STK_CTRL, SYSTICK_CTRL_TICKINT_POS);
 }
 
 __inline void enable_systick(void) {
-    SET_BIT(SYSTICK->STK_CTRL, SYSTICK_CTRL_ENABLE);
+    SET_BIT(SYSTICK->STK_CTRL, SYSTICK_CTRL_ENABLE_POS);
 }
 
 __inline void disable_systick(void) {
-    CLR_BIT(SYSTICK->STK_CTRL, SYSTICK_CTRL_ENABLE);
+    CLR_BIT(SYSTICK->STK_CTRL, SYSTICK_CTRL_ENABLE_POS);
 }
 
 __inline void set_systick_clksrc(const SysTick_Clksrc clk_src) {
-    MODIFY_BITS(SYSTICK->STK_CTRL, SYSTICK_CTRL_CLKSOURCE, 1, clk_src);
+    SYSTICK->STK_CTRL = (SYSTICK->STK_CTRL & ~SYSTICK_CTRL_CLKSRC_BM) | (clk_src << SYSTICK_CTRL_CLKSRC_POS); 
 }
 
 __inline void load_systick(const uint32_t reload_val) {
-    MODIFY_BITS(SYSTICK->STK_LOAD, SYSTICK_LOAD, SYSTICK_WIDTH, reload_val);
+    SYSTICK->STK_LOAD = reload_val & SYSTICK_LOAD_BM;
 }
 
 __inline void clear_systick(void) {
@@ -66,7 +72,7 @@ __inline void clear_systick(void) {
 }
 
 __inline uint8_t read_systick_countflag(void) {
-    return TEST_BIT(SYSTICK->STK_CTRL, SYSTICK_CTRL_COUNTFLAG);
+    return TST_BIT(SYSTICK->STK_CTRL, SYSTICK_CTRL_COUNTFLAG_POS);
 }
 
 #endif

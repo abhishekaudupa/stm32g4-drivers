@@ -47,83 +47,91 @@ typedef struct {
     uint32_t RCC_CCIPR2;
 } RCC;
 
-#define RCC     ((volatile RCC*) 0X40021000)
+/* RCC peripheral location */
+#define RCC                         ((volatile RCC*) 0X40021000U)
 
-/* RCC CR bit positions */
-#define RCC_CR_HSEON        16
-#define RCC_CR_HSERDY       17
-#define RCC_CR_HSEBYP       18
-#define RCC_CR_HSION        8
-#define RCC_CR_HSIRDY       10
-#define RCC_CR_PLLON        24
-#define RCC_CR_PLLRDY       25
+/* bit positions in registers */
+#define RCC_CR_HSION_POS            8
+#define RCC_CR_HSIKERON_POS         9
+#define RCC_CR_HSIRDY_POS           10
+#define RCC_CR_HSEON_POS            16
+#define RCC_CR_HSERDY_POS           17
+#define RCC_CR_HSEBYP_POS           18
+#define RCC_CR_PLLON_POS            24
+#define RCC_CR_PLLRDY_POS           25
+#define RCC_CFGR_SW_POS             0
+#define RCC_CFGR_SWS_POS            2
+#define RCC_PLLCFGR_PLLSRC_POS      0
 
-/* RCC PLLCFGR bit positions */
-#define RCC_PLLCFGR_PLLSRC  0
-
-/* RCC RCC_CFGR bit positions */
-#define RCC_CFGR_SYSCLK     0
-
-/* Register instr. widths */
-#define RCC_PLLSRC_IWIDTH   2
-#define RCC_SYSCLK_IWIDTH   2
+/* bitmasks for registers */
+#define RCC_CR_HSION_BM            (0x1U << RCC_CR_HSION_POS)
+#define RCC_CR_HSIRDY_BM           (0x1U << RCC_CR_HSIRDY_POS)
+#define RCC_CR_HSEON_BM            (0x1U << RCC_CR_HSEON_POS)
+#define RCC_CR_HSERDY_BM           (0x1U << RCC_CR_HSERDY_POS)
+#define RCC_CR_HSEBYP_BM           (0x1U << RCC_CR_HSEBYP_POS)
+#define RCC_CR_PLLON_BM            (0x1U << RCC_CR_PLLON_POS)
+#define RCC_CR_PLLRDY_BM           (0x1U << RCC_CR_PLLRDY_POS)
+#define RCC_CFGR_SW_BM             (0x3U << RCC_CFGR_SW_POS)
+#define RCC_CFGR_SWS_BM            (0x3U << RCC_CFGR_SWS_POS)
+#define RCC_PLLCFGR_PLLSRC_BM      (0x3U << RCC_PLLCFGR_PLLSRC_POS)
 
 typedef enum {
-    RCC_PLL_Src_HSI16   = 0x10U,
-    RCC_PLL_Src_HSE     = 0x11U
+    RCC_PLL_Src_None    = 0x0U,
+    RCC_PLL_Src_HSI16   = 0x2U,
+    RCC_PLL_Src_HSE     = 0x3U
 } RCC_PLL_Src;
 
 typedef enum {
-    SysClk_Src_HSI16    = 0x01U,
-    SysClk_Src_HSE      = 0x10U,
-    SysClk_Src_PLL      = 0x11U
+    SysClk_Src_HSI16    = 0x1U,
+    SysClk_Src_HSE      = 0x2U,
+    SysClk_Src_PLL      = 0x3U
 } RCC_SysClk_Src;
 
 __inline void enable_rcc_hse_oscext(void) {
-    SET_BIT(RCC->RCC_CR, RCC_CR_HSEON);
-    while(!TEST_BIT(RCC->RCC_CR, RCC_CR_HSERDY));
+    SET_BIT(RCC->RCC_CR, RCC_CR_HSEON_POS);
+    while(!TST_BIT(RCC->RCC_CR, RCC_CR_HSERDY_POS));
 }
 
 __inline void disable_rcc_hse_oscext(void) {
-    CLR_BIT(RCC->RCC_CR, RCC_CR_HSEON);
-    while(TEST_BIT(RCC->RCC_CR, RCC_CR_HSERDY));
+    CLR_BIT(RCC->RCC_CR, RCC_CR_HSEON_POS);
+    while(TST_BIT(RCC->RCC_CR, RCC_CR_HSERDY_POS));
 }
 
 __inline void enable_rcc_hse_srcext(void) {
-    SET_BIT(RCC->RCC_CR, RCC_CR_HSEON);
-    SET_BIT(RCC->RCC_CR, RCC_CR_HSEBYP);
+    SET_BIT(RCC->RCC_CR, RCC_CR_HSEON_POS);
+    SET_BIT(RCC->RCC_CR, RCC_CR_HSEBYP_POS);
 }
 
 __inline void disable_rcc_hse_srcext(void) {
-    CLR_BIT(RCC->RCC_CR, RCC_CR_HSEON);
+    CLR_BIT(RCC->RCC_CR, RCC_CR_HSEON_POS);
 }
 
 __inline void enable_rcc_hsi(void) {
-    SET_BIT(RCC->RCC_CR, RCC_CR_HSION);
-    while(!TEST_BIT(RCC->RCC_CR, RCC_CR_HSIRDY));
+    SET_BIT(RCC->RCC_CR, RCC_CR_HSION_POS);
+    while(!TST_BIT(RCC->RCC_CR, RCC_CR_HSIRDY_POS));
 }
 
 __inline void disable_rcc_hsi(void) {
-    CLR_BIT(RCC->RCC_CR, RCC_CR_HSION);
-    while(TEST_BIT(RCC->RCC_CR, RCC_CR_HSIRDY));
+    CLR_BIT(RCC->RCC_CR, RCC_CR_HSION_POS);
+    while(TST_BIT(RCC->RCC_CR, RCC_CR_HSIRDY_POS));
 }
 
 __inline void enable_rcc_pll(void) {
-    SET_BIT(RCC->RCC_CR, RCC_CR_PLLON);
-    while(!TEST_BIT(RCC->RCC_CR, RCC_CR_PLLRDY));
+    SET_BIT(RCC->RCC_CR, RCC_CR_PLLON_POS);
+    while(!TST_BIT(RCC->RCC_CR, RCC_CR_PLLRDY_POS));
 }
 
 __inline void disable_rcc_pll(void) {
-    CLR_BIT(RCC->RCC_CR, RCC_CR_PLLON);
-    while(TEST_BIT(RCC->RCC_CR, RCC_CR_PLLRDY));
+    CLR_BIT(RCC->RCC_CR, RCC_CR_PLLON_POS);
+    while(TST_BIT(RCC->RCC_CR, RCC_CR_PLLRDY_POS));
 }
 
 __inline void set_rcc_pll_source(const RCC_PLL_Src pll_src) {
-    MODIFY_BITS(RCC->RCC_PLLCFGR, RCC_PLLCFGR_PLLSRC, RCC_PLLSRC_IWIDTH, pll_src);
+    RCC->RCC_PLLCFGR = (RCC->RCC_PLLCFGR & ~RCC_PLLCFGR_PLLSRC_BM) | (pll_src << RCC_PLLCFGR_PLLSRC_POS); 
 }
 
-__inline void set_rcc_sysclk_source(const RCC_PLL_Src sysclk_src) {
-    MODIFY_BITS(RCC->RCC_CFGR, RCC_CFGR_SYSCLK, RCC_SYSCLK_IWIDTH, sysclk_src);
+__inline void set_rcc_sysclk_source(const RCC_SysClk_Src sysclk_src) {
+    RCC->RCC_CFGR = ((RCC->RCC_CFGR & ~RCC_CFGR_SW_BM) | (sysclk_src << RCC_CFGR_SW_POS));
 }
 
 #endif
