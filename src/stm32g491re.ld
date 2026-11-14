@@ -11,11 +11,11 @@ _estack = ORIGIN(sram) + LENGTH(sram);
 SECTIONS {
     
     .sysivt : {
-        *(".sysivt")
+        KEEP(*(".sysivt"))
     }> flash
 
     .ivt : {
-        *(".ivt")
+        KEEP(*(".ivt"))
     }> flash
 
     .text : {
