@@ -7,4 +7,10 @@
 
 void prep_user_led();
 
+void user_led_on(void);
+
+void user_led_off(void);
+
+void user_led_tgl(void);
+
 #endif

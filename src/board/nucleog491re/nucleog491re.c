@@ -24,6 +24,6 @@ void user_led_off(void) {
     gpio_clr_pin(GPIOA, LD2);
 }
 
-void user_leg_tgl(void) {
+void user_led_tgl(void) {
     gpio_tgl_pin(GPIOA, LD2);
 }
