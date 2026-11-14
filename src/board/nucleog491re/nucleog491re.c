@@ -15,3 +15,15 @@ void prep_user_led() {
     // pull-up on GPIOA pin 5
     set_gpio_pupd(GPIOA, LD2, GPIO_PU);
 }
+
+void user_led_on(void) {
+    gpio_set_pin(GPIOA, LD2);
+}
+
+void user_led_off(void) {
+    gpio_clr_pin(GPIOA, LD2);
+}
+
+void user_leg_tgl(void) {
+    gpio_tgl_pin(GPIOA, LD2);
+}
