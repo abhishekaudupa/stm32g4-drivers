@@ -6,13 +6,13 @@ SRC_DIR			:= $(PROJECT_ROOT)/src
 INCLUDE_DIRS	:= -I$(SRC_DIR)
 
 CC 				:= arm-none-eabi-gcc
-CFLAGS	 		:= $(INCLUDE_DIRS) -MMD -MP -mcpu=cortex-m4 -mthumb -ffreestanding -O2 -g -Wall
+CFLAGS	 		:= $(INCLUDE_DIRS) -MMD -MP -mcpu=cortex-m4 -mthumb -ffreestanding -ffunction-sections -fdata-sections -O2 -g -Wall
 CLEAN_TARGETS	:= *.o *.d *.out *.elf *.bin *.map *.log $(BUILD_DIR) $(LOG_DIR)
 
 MAKEFLAGS		+= --no-print-directory
 LINKER_SCRIPT	:= stm32g491re.ld
 LINKER_MAP		:= $(FINAL_MODULE).map
-LDFLAGS 		:= -Wl,-T $(SRC_DIR)/$(LINKER_SCRIPT) -Wl,-Map=$(BUILD_DIR)/$(LINKER_MAP) -nostdlib
+LDFLAGS 		:= -Wl,-T $(SRC_DIR)/$(LINKER_SCRIPT) -Wl,-Map=$(BUILD_DIR)/$(LINKER_MAP) -nostdlib -Wl,--gc-sections
 ELF				:= $(FINAL_MODULE).elf
 BIN				:= $(FINAL_MODULE).bin
 
