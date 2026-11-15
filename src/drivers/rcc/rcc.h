@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 #include <utils/utils.h>
+#include <drivers/rcc/pll_hsi16_match.h>
+#include <drivers/rcc/pll_hse24_match.h>
 
 typedef struct {
     uint32_t RCC_CR;
