@@ -76,6 +76,15 @@ typedef struct {
 #define RCC_PLLCFGR_PLLREN_POS      24
 #define RCC_PLLCFGR_PLLR_POS        25
 #define RCC_PLLCFGR_PLLPDIV_POS     27
+#define RCC_APB1ENR2_LPUARTEN_POS   0
+#define RCC_AHB2ENR_GPIOAEN_POS     0
+#define RCC_AHB2ENR_GPIOBEN_POS     1
+#define RCC_AHB2ENR_GPIOCEN_POS     2
+#define RCC_AHB2ENR_GPIODEN_POS     3
+#define RCC_AHB2ENR_GPIOEEN_POS     4
+#define RCC_AHB2ENR_GPIOFEN_POS     5
+#define RCC_AHB2ENR_GPIOGEN_POS     6
+#define RCC_CCIPR_LPUART1SEL_POS    10
 
 /* bitmasks for registers */
 #define RCC_CR_HSION_BM            (0x1U << RCC_CR_HSION_POS)
@@ -100,13 +109,14 @@ typedef struct {
 #define RCC_PLLCFGR_PLLREN_BM      (0x1U << RCC_PLLCFGR_PLLREN_POS)
 #define RCC_PLLCFGR_PLLR_BM        (0x3U << RCC_PLLCFGR_PLLR_POS)
 #define RCC_PLLCFGR_PLLPDIV_BM     (0x1FU << RCC_PLLCFGR_PLLPDIV_POS)
-
-/* PLL clock division/multiplication macros */
-#define RCC_PLLCFGR_PLLPDIV(n)     (n)
-#define RCC_PLLCFGR_PLLQ(n)        (n / 2 - 1)
-#define RCC_PLLCFGR_PLLR(n)        (n / 2 - 1)
-#define RCC_PLLCFGR_PLLN(n)        (n)
-#define RCC_PLLCFGR_PLLM(n)        (n - 1)
+#define RCC_APB1ENR2_LPUARTEN_BM   (0x1U << RCC_APB1ENR2_LPUARTEN_POS)
+#define RCC_AHB2ENR_GPIOAEN_BM     (0x1U << RCC_AHB2ENR_GPIOAEN_POS)
+#define RCC_AHB2ENR_GPIOBEN_BM     (0x1U << RCC_AHB2ENR_GPIOBEN_POS)
+#define RCC_AHB2ENR_GPIOCEN_BM     (0x1U << RCC_AHB2ENR_GPIOCEN_POS)
+#define RCC_AHB2ENR_GPIODEN_BM     (0x1U << RCC_AHB2ENR_GPIODEN_POS)
+#define RCC_AHB2ENR_GPIOEEN_BM     (0x1U << RCC_AHB2ENR_GPIOEEN_POS)
+#define RCC_AHB2ENR_GPIOFEN_BM     (0x1U << RCC_AHB2ENR_GPIOFEN_POS)
+#define RCC_AHB2ENR_GPIOGEN_BM     (0x1U << RCC_AHB2ENR_GPIOGEN_POS)
 
 typedef enum {
     RCC_PLL_Src_None    = 0x0U,
