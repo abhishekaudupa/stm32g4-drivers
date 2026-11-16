@@ -19,26 +19,26 @@ SECTIONS {
     }> flash
 
     .text : {
-        *(".text")
+        *(".text.*")
     }> flash
 
     .rodata : {
-        *(".rodata")
         . = ALIGN(4);
+        *(".rodata.*")
         _etext = .;
     }> flash
     
     .data : {
-        _sdata = .;
-        *(".data")
         . = ALIGN(4);
+        _sdata = .;
+        *(".data.*")
         _edata = .;
     }> sram AT> flash
     
     .bss : {
-        _sbss = .;
-        *(".bss")
         . = ALIGN(4);
+        _sbss = .;
+        *(".bss.*")
         _ebss = .;
     }> sram
 }
