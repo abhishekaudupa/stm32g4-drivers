@@ -7,13 +7,13 @@ void prep_user_led() {
     enable_gpio('A');
 
     // set GPIOA pin 5 as output
-    set_gpio_mode(GPIOA, LD2, GPIO_OP);
+    set_gpio_mode(GPIOA, LD2, GPIO_MODE_OP);
 
     // GPIOA pin 5 is in push-pull mode
-    set_gpio_otype(GPIOA, LD2, GPIO_PP);
+    set_gpio_otype(GPIOA, LD2, GPIO_OTYPE_PP);
 
     // pull-up on GPIOA pin 5
-    set_gpio_pupd(GPIOA, LD2, GPIO_PU);
+    set_gpio_pupd(GPIOA, LD2, GPIO_PP_PU);
 }
 
 void user_led_on(void) {

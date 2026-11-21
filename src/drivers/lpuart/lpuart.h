@@ -51,6 +51,7 @@ typedef struct {
 #define LPUART_ISR_TEACK_POS                21
 #define LPUART_ISR_BUSY_POS                 16
 #define LPUART_ISR_TXFNF_POS                7
+#define LPUART_ISR_TXE_POS                  7
 #define LPUART_ISR_TC_POS                   6
 #define LPUART_ISR_RXFNE_POS                5
 #define LPUART_ISR_IDLE_POS                 4
@@ -93,6 +94,7 @@ typedef struct {
 #define LPUART_ISR_TEACK_BM                (0x1U << LPUART_ISR_TEACK_POS)
 #define LPUART_ISR_BUSY_BM                 (0x1U << LPUART_ISR_BUSY_POS)
 #define LPUART_ISR_TXFNF_BM                (0x1U << LPUART_ISR_TXFNF_POS)
+#define LPUART_ISR_TXE_BM                  (0x1U << LPUART_ISR_TXE_POS)
 #define LPUART_ISR_TC_BM                   (0x1U << LPUART_ISR_TC_POS)
 #define LPUART_ISR_RXFNE_BM                (0x1U << LPUART_ISR_RXFNE_POS)
 #define LPUART_ISR_IDLE_BM                 (0x1U << LPUART_ISR_IDLE_POS)
@@ -149,10 +151,18 @@ typedef enum {
 } LPUART_Presc;
 
 __inline void enable_lpuart(void) {
-    SET_BIT(RCC->RCC_APB1ENR2, RCC_APB1ENR2_LPUARTEN_POS);
+    SET_BIT(LPUART->LPUART_CR1, LPUART_CR1_UE_POS);
 }
 
 __inline void disable_lpuart(void) {
+    CLR_BIT(LPUART->LPUART_CR1, LPUART_CR1_UE_POS);
+}
+
+__inline void enable_lpuart_clock(void) {
+    SET_BIT(RCC->RCC_APB1ENR2, RCC_APB1ENR2_LPUARTEN_POS);
+}
+
+__inline void disable_lpuart_clock(void) {
     CLR_BIT(RCC->RCC_APB1ENR2, RCC_APB1ENR2_LPUARTEN_POS);
 }
 
@@ -191,6 +201,10 @@ __inline void set_lpuart_presc(const LPUART_Presc presc) {
 
 __inline void set_lpuart_clksrc(const LPUART_ClkSrc clk_src) {
     RCC->RCC_CCIPR = (RCC->RCC_CCIPR & ~RCC_APB1ENR2_LPUARTEN_BM) | (clk_src << RCC_CCIPR_LPUART1SEL_POS);
+}
+
+__inline void enable_lpuart_transmit(void) {
+    SET_BIT(LPUART->LPUART_CR1, LPUART_CR1_TE_POS);
 }
 
 #endif

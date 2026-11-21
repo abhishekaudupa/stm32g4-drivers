@@ -51,6 +51,9 @@ debug: $(ELF)
 	@echo "Flashing and starting GDB debugger"
 	@./debug.sh $(ELF)
 
+serial:
+	@tio -b 115200 -d 8 -s 1 /dev/ttyACM0
+
 clean:
 	@$(MAKE) -C $(SRC_DIR) clean
 	rm -rf $(CLEAN_TARGETS)

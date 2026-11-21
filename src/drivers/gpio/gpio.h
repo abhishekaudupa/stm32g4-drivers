@@ -21,31 +21,31 @@ typedef struct {
 
 /* GPIO modes in MODER */
 typedef enum {
-    GPIO_IP = 0x0U,
-    GPIO_OP = 0x1U,
-    GPIO_AF = 0x2U,
-    GPIO_AN = 0x3U,
+    GPIO_MODE_IP = 0x0U,
+    GPIO_MODE_OP = 0x1U,
+    GPIO_MODE_AF = 0x2U,
+    GPIO_MODE_AN = 0x3U,
 } GPIO_Mode;
 
 /* GPIO push-pull or open drain in OTYPER */
 typedef enum {
-    GPIO_PP = 0x0U,
-    GPIO_OD = 0x1U,
+    GPIO_OTYPE_PP = 0x0U,
+    GPIO_OTYPE_OD = 0x1U,
 } GPIO_Output_Type;
 
 /* GPIO pull-up, pull-down or none in PUPDR */
 typedef enum {
-    GPIO_NO = 0x0U,
-    GPIO_PU = 0x1U,
-    GPIO_PD = 0x2U,
+    GPIO_PP_NO = 0x0U,
+    GPIO_PP_PU = 0x1U,
+    GPIO_PP_PD = 0x2U,
 } GPIO_Push_Pull;
 
 /* GPIO speed in OSPEEDR */
 typedef enum {
-    GPIO_LS  = 0x0U,
-    GPIO_MS  = 0x1U,
-    GPIO_HS  = 0x2U,
-    GPIO_VHS = 0x3U,
+    GPIO_OSPEED_LS  = 0x0U,
+    GPIO_OSPEED_MS  = 0x1U,
+    GPIO_OSPEED_HS  = 0x2U,
+    GPIO_OSPEED_VHS = 0x3U,
 } GPIO_Speed;
 
 /* GPIO alternte funcs in AFRH and AFRL */
