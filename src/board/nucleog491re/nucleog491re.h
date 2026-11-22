@@ -15,4 +15,6 @@ void user_led_off(void);
 
 void user_led_tgl(void);
 
+void enable_lpuart_pins(void);
+
 #endif

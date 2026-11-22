@@ -20,6 +20,14 @@ typedef struct {
     uint32_t LPUART_PRESC;
 } LPUART;
 
+typedef struct {
+    uint32_t baudrate:  20;
+    uint32_t presc:     4;
+    uint32_t wordlen:   2;
+    uint32_t clksrc:    2;
+    uint32_t stopbit:   2; 
+} LPUART_Config;
+
 #define LPUART      ((volatile LPUART*) 0x40008000U)
 
 /* bit positions for registers */
@@ -203,7 +211,9 @@ __inline void set_lpuart_clksrc(const LPUART_ClkSrc clk_src) {
     RCC->RCC_CCIPR = (RCC->RCC_CCIPR & ~RCC_APB1ENR2_LPUARTEN_BM) | (clk_src << RCC_CCIPR_LPUART1SEL_POS);
 }
 
-__inline void enable_lpuart_transmit(void) {
+__inline void lpuart_send_idle_frame(void) {
+    CLR_BIT(LPUART->LPUART_CR1, LPUART_CR1_TE_POS);
+    while(TST_BIT(LPUART->LPUART_ISR, LPUART_ISR_TEACK_POS));
     SET_BIT(LPUART->LPUART_CR1, LPUART_CR1_TE_POS);
 }
 
