@@ -25,7 +25,8 @@ typedef struct {
     uint32_t presc:     4;
     uint32_t wordlen:   2;
     uint32_t clksrc:    2;
-    uint32_t stopbit:   2; 
+    uint32_t stopbit:   2;
+    uint32_t fifomode:  1;
 } LPUART_Config;
 
 #define LPUART      ((volatile LPUART*) 0x40008000U)
@@ -62,6 +63,7 @@ typedef struct {
 #define LPUART_ISR_TXE_POS                  7
 #define LPUART_ISR_TC_POS                   6
 #define LPUART_ISR_RXFNE_POS                5
+#define LPUART_ISR_RXNE_POS                 5
 #define LPUART_ISR_IDLE_POS                 4
 #define LPUART_ISR_ORE_POS                  3
 #define LPUART_ISR_NE_POS                   2

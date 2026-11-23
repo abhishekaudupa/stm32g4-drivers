@@ -1,15 +1,38 @@
 #include <stdint.h>
-#include <utils/utils.h>
-#include <drivers/rcc/rcc.h>
-#include <drivers/gpio/gpio.h>
-#include <drivers/nvic/nvic.h>
-#include <drivers/systick/systick.h>
-#include <drivers/asm/asm.h>
-#include <drivers/lpuart/lpuart.h>
 #include <board/nucleog491re/nucleog491re.h>
+#include <drivers/asm/asm.h>
+#include <drivers/gpio/gpio.h>
+#include <drivers/lpuart/lpuart.h>
+#include <drivers/nvic/nvic.h>
+#include <drivers/rcc/rcc.h>
+#include <drivers/systick/systick.h>
+#include <utils/utils.h>
 
-void sysTick_handler() {
-    TGL_BIT(GPIOA->GPIO_ODR, LD2);
+void sysTick_handler() { 
+    TGL_BIT(GPIOA->GPIO_ODR, LD2); 
+}
+
+void LPUART1_IRQHandler(void) {
+    if (TST_BIT(LPUART->LPUART_ISR, LPUART_ISR_TEACK_POS)) {
+    }
+    
+    if (TST_BIT(LPUART->LPUART_ISR, LPUART_ISR_REACK_POS)) {
+    }
+
+    if (TST_BIT(LPUART->LPUART_ISR, LPUART_ISR_BUSY_POS)) {
+    }
+    
+    if (TST_BIT(LPUART->LPUART_ISR, LPUART_ISR_TXE_POS)) {
+    }
+    
+    if (TST_BIT(LPUART->LPUART_ISR, LPUART_ISR_TC_POS)) {
+    }
+    
+    if (TST_BIT(LPUART->LPUART_ISR, LPUART_ISR_RXNE_POS)) {
+    }
+    
+    if (TST_BIT(LPUART->LPUART_ISR, LPUART_ISR_IDLE_POS)) {
+    }
 }
 
 void start_pll_50_MHz(void) {
@@ -26,41 +49,43 @@ void start_pll_50_MHz(void) {
 }
 
 void start_systick_500_ms(void) {
-    Systick_Config config = { .load_val = 0x2faf08, .interrupt = 1, .clk_src = SysTick_Clk_AHB_8 };
+    Systick_Config config = {.load_val = 0x2faf08, .interrupt = 1, .clk_src = SysTick_Clk_AHB_8};
     prep_user_led();
     start_systick(config);
 }
 
-void init_lpuart(void) {
-    volatile uint32_t dummy __unused;
-    
-    enable_gpio('A');
-    set_gpio_mode(GPIOA, GPIO_P02, GPIO_MODE_AF);
-    set_gpio_otype(GPIOA, GPIO_P02, GPIO_OTYPE_PP);
-    set_gpio_pupd(GPIOA, GPIO_P02, GPIO_PP_NO);
-    set_gpio_afrl(GPIOA, GPIO_P02, GPIO_AF12);
-    set_gpio_mode(GPIOA, GPIO_P03, GPIO_MODE_AF);
-    set_gpio_otype(GPIOA, GPIO_P03, GPIO_OTYPE_PP);
-    set_gpio_pupd(GPIOA, GPIO_P03, GPIO_PP_NO);
-    set_gpio_afrl(GPIOA, GPIO_P03, GPIO_AF12);
-
+void init_lpuart(const LPUART_Config config) {
     enable_lpuart_clock();
-    set_lpuart_wordlen(LPUART_WordLen_8);
-    set_lpuart_clksrc(LPUART_ClkSrc_SysClk);
-    set_lpuart_presc(LPUART_Presc_1);
-    set_lpuart_baudrate(0x1b207); //115200
-    set_lpuart_stop(LPUART_Stop_1bit);
+    set_lpuart_wordlen(config.wordlen);
+    set_lpuart_clksrc(config.clksrc);
+    set_lpuart_presc(config.presc);
+    set_lpuart_baudrate(config.baudrate);
+    set_lpuart_stop(config.stopbit);
+    if (config.fifomode)
+        enable_lpuart_fifo();
     enable_lpuart();
-    enable_lpuart_transmit();
+    lpuart_send_idle_frame();
+}
 
-    LPUART->LPUART_TDR = 'A';
-    // check TXE, should be off.
-    dummy = TST_BIT(LPUART->LPUART_ISR, LPUART_ISR_TXE_POS);
-    while(!TST_BIT(LPUART->LPUART_ISR, LPUART_ISR_TC_POS));
+void lpuart_transmit_data(const uint8_t data) {
+    while (TST_BIT(LPUART->LPUART_ISR, LPUART_ISR_TXE_POS) == 0); 
+    LPUART->LPUART_TDR = data;
 }
 
 int main(void) {
+    LPUART_Config lpuart_config = {.baudrate = 0x1b207, // 115200 baud
+        .clksrc   = LPUART_ClkSrc_SysClk,
+        .presc    = LPUART_Presc_1,
+        .stopbit  = LPUART_Stop_1bit,
+        .wordlen  = LPUART_WordLen_8,
+        .fifomode = 1};
+
     start_pll_50_MHz();
-    init_lpuart();
+    enable_lpuart_pins();
+    init_lpuart(lpuart_config);
+
+    char *data = "/stm32g491re@abhishek> ";
+    for (int i = 0; data[i]; ++i)
+        lpuart_transmit_data(data[i]);
     return 0;
 }
