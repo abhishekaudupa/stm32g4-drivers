@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <utils/utils.h>
 #include <drivers/rcc/rcc.h>
+#include <drivers/nvic/nvic.h>
 
 typedef struct {
     uint32_t LPUART_CR1;
@@ -27,9 +28,11 @@ typedef struct {
     uint32_t clksrc:    2;
     uint32_t stopbit:   2;
     uint32_t fifomode:  1;
+    uint32_t interrupt: 1;
 } LPUART_Config;
 
 #define LPUART      ((volatile LPUART*) 0x40008000U)
+#define LPUART_IRQn 91
 
 /* bit positions for registers */
 #define LPUART_CR1_RXFFIE_POS               31
@@ -38,6 +41,7 @@ typedef struct {
 #define LPUART_CR1_M1_POS                   28
 #define LPUART_CR1_M0_POS                   12
 #define LPUART_CR1_TXFNFIE_POS              7
+#define LPUART_CR1_TXEIE_POS                7
 #define LPUART_CR1_TCIE_POS                 6
 #define LPUART_CR1_RXFNEIE_POS              5
 #define LPUART_CR1_IDLEIE_POS               4
@@ -217,6 +221,14 @@ __inline void lpuart_send_idle_frame(void) {
     CLR_BIT(LPUART->LPUART_CR1, LPUART_CR1_TE_POS);
     while(TST_BIT(LPUART->LPUART_ISR, LPUART_ISR_TEACK_POS));
     SET_BIT(LPUART->LPUART_CR1, LPUART_CR1_TE_POS);
+}
+
+__inline void enable_lpuart_irq(void) {
+    enable_IRQn(LPUART_IRQn);
+}
+
+__inline void disable_lpuart_irq(void) {
+    disable_IRQn(LPUART_IRQn);
 }
 
 #endif
