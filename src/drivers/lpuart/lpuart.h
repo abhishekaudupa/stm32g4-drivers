@@ -164,12 +164,30 @@ typedef enum {
     LPUART_Presc_256    = 0xBU,
 } LPUART_Presc;
 
-__inline void enable_lpuart(void) {
-    SET_BIT(LPUART->LPUART_CR1, LPUART_CR1_UE_POS);
-}
+LPUART_Config lpuart_config;
+volatile uint8_t lpuart_txbuf[256];
+volatile uint8_t lpuart_rxbuf[256];
+volatile uint16_t lpuart_txbuf_wptr = 0;
+volatile uint16_t lpuart_txbuf_rptr = 0;
 
-__inline void disable_lpuart(void) {
-    CLR_BIT(LPUART->LPUART_CR1, LPUART_CR1_UE_POS);
+void LPUART1_IRQHandler(void) {
+    if (TST_BIT(LPUART->LPUART_ISR, LPUART_ISR_TXE_POS)) {
+        if (lpuart_txbuf_rptr < lpuart_txbuf_wptr) {
+            LPUART->LPUART_TDR = lpuart_txbuf[lpuart_txbuf_rptr & 0xFFU];
+            lpuart_txbuf_rptr += 1;
+        } else {
+            CLR_BIT(LPUART->LPUART_CR1, LPUART_CR1_TXEIE_POS);
+        }
+    }
+
+    /*
+       if (TST_BIT(LPUART->LPUART_ISR, LPUART_ISR_TC_POS)) {
+       if (lpuart_txbuf_rptr == lpuart_txbuf_wptr) {
+       CLR_BIT(LPUART->LPUART_CR1, LPUART_CR1_TXEIE_POS);
+       SET_BIT(LPUART->LPUART_ICR, LPUART_ICR_TCCF_POS);
+       }
+       }
+       */
 }
 
 __inline void enable_lpuart_clock(void) {
@@ -178,6 +196,14 @@ __inline void enable_lpuart_clock(void) {
 
 __inline void disable_lpuart_clock(void) {
     CLR_BIT(RCC->RCC_APB1ENR2, RCC_APB1ENR2_LPUARTEN_POS);
+}
+
+__inline void enable_lpuart(void) {
+    SET_BIT(LPUART->LPUART_CR1, LPUART_CR1_UE_POS);
+}
+
+__inline void disable_lpuart(void) {
+    CLR_BIT(LPUART->LPUART_CR1, LPUART_CR1_UE_POS);
 }
 
 __inline void set_lpuart_wordlen(const LPUART_WordLen wordlen) {
@@ -229,6 +255,49 @@ __inline void enable_lpuart_irq(void) {
 
 __inline void disable_lpuart_irq(void) {
     disable_IRQn(LPUART_IRQn);
+}
+
+__inline void init_lpuart(const LPUART_Config config) {
+    lpuart_config = config;
+    enable_lpuart_clock();
+    set_lpuart_wordlen(config.wordlen);
+    set_lpuart_clksrc(config.clksrc);
+    set_lpuart_presc(config.presc);
+    set_lpuart_baudrate(config.baudrate);
+    set_lpuart_stop(config.stopbit);
+    if (config.fifomode)
+        enable_lpuart_fifo();
+    enable_lpuart();
+    lpuart_send_idle_frame();
+    if (config.interrupt)
+        enable_lpuart_irq();
+}
+
+__inline uint8_t lpuart_tx_async(const uint8_t *data, const uint8_t len) {
+    uint8_t i = 0;
+    while (i < len) { 
+        if (lpuart_txbuf_wptr > lpuart_txbuf_rptr + 255)
+            break;
+        lpuart_txbuf[lpuart_txbuf_wptr & 0xFFU] = data[i++];
+        lpuart_txbuf_wptr += 1;
+    }
+
+    // fire tx interrupt.
+    SET_BIT(LPUART->LPUART_CR1, LPUART_CR1_TXEIE_POS);
+
+    return i;
+}
+
+__inline uint8_t lpuart_tx_sync(const uint8_t *data, const uint8_t len) {
+    for (uint8_t i = 0; i < len; ) {
+        if (TST_BIT(LPUART->LPUART_ISR, LPUART_ISR_TXE_POS) != 0)
+            LPUART->LPUART_TDR = data[i++];
+    }
+    return len;
+}
+
+__inline uint8_t lpuart_transmit_data(const uint8_t *data, const uint8_t len) {
+    return lpuart_config.interrupt? lpuart_tx_async(data, len): lpuart_tx_sync(data, len);
 }
 
 #endif
