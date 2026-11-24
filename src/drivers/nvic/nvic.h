@@ -227,4 +227,88 @@ typedef struct {
 #define NVIC_IPR  ((volatile NVIC_IPR*)  0xE000E400)
 #define NVIC_STIR (*(volatile uint32_t*) 0xE000EF00)
 
+__inline void enable_IRQn(const uint8_t irq_n) {
+    if (irq_n <= 31) {
+        SET_BIT(NVIC_ISER->NVIC_ISER0, irq_n);
+        return;
+    }
+
+    if (irq_n <= 63) {
+        SET_BIT(NVIC_ISER->NVIC_ISER1, irq_n - 32);
+        return;
+    }
+    
+    if (irq_n <= 95) {
+        SET_BIT(NVIC_ISER->NVIC_ISER2, irq_n - 64);
+        return;
+    }
+    
+    if (irq_n <= 127) {
+        SET_BIT(NVIC_ISER->NVIC_ISER3, irq_n - 96);
+        return;
+    }
+
+    if (irq_n <= 167) {
+        SET_BIT(NVIC_ISER->NVIC_ISER4, irq_n - 128);
+        return;
+    }
+
+    if (irq_n <= 191) {
+        SET_BIT(NVIC_ISER->NVIC_ISER5, irq_n - 168);
+        return;
+    }
+
+    if (irq_n <= 223) {
+        SET_BIT(NVIC_ISER->NVIC_ISER6, irq_n - 192);
+        return;
+    }
+
+    if (irq_n <= 239) {
+        SET_BIT(NVIC_ISER->NVIC_ISER7, irq_n - 224);
+        return;
+    }
+}
+
+__inline void disable_IRQn(const uint8_t irq_n) {
+    if (irq_n <= 31) {
+        SET_BIT(NVIC_ICER->NVIC_ICER0, irq_n);
+        return;
+    }
+
+    if (irq_n <= 63) {
+        SET_BIT(NVIC_ICER->NVIC_ICER1, irq_n - 32);
+        return;
+    }
+
+    if (irq_n <= 95) {
+        SET_BIT(NVIC_ICER->NVIC_ICER2, irq_n - 64);
+        return;
+    }
+
+    if (irq_n <= 127) {
+        SET_BIT(NVIC_ICER->NVIC_ICER3, irq_n - 96);
+        return;
+    }
+
+    if (irq_n <= 167) {
+        SET_BIT(NVIC_ICER->NVIC_ICER4, irq_n - 128);
+        return;
+    }
+
+    if (irq_n <= 191) {
+        SET_BIT(NVIC_ICER->NVIC_ICER5, irq_n - 168);
+        return;
+    }
+
+    if (irq_n <= 223) {
+        SET_BIT(NVIC_ICER->NVIC_ICER6, irq_n - 192);
+        return;
+    }
+
+    if (irq_n <= 239) {
+        SET_BIT(NVIC_ICER->NVIC_ICER7, irq_n - 224);
+        return;
+    }
+}
+
 #endif
