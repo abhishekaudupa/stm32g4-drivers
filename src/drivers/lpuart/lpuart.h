@@ -5,6 +5,7 @@
 #include <utils/utils.h>
 #include <drivers/rcc/rcc.h>
 #include <drivers/nvic/nvic.h>
+#include <stdlib/mem.h>
 
 typedef struct {
     uint32_t LPUART_CR1;
@@ -289,11 +290,12 @@ __inline uint8_t lpuart_tx_async(const uint8_t *data, const uint8_t len) {
 }
 
 __inline uint8_t lpuart_tx_sync(const uint8_t *data, const uint8_t len) {
-    for (uint8_t i = 0; i < len; ) {
+    uint8_t i = 0;
+    for (i = 0; i < len; ) {
         if (TST_BIT(LPUART->LPUART_ISR, LPUART_ISR_TXE_POS) != 0)
             LPUART->LPUART_TDR = data[i++];
     }
-    return len;
+    return i;
 }
 
 __inline uint8_t lpuart_transmit_data(const uint8_t *data, const uint8_t len) {
