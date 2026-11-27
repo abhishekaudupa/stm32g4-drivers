@@ -5,7 +5,7 @@
 #include <utils/utils.h>
 #include <drivers/rcc/rcc.h>
 #include <drivers/nvic/nvic.h>
-#include <stdlib/mem.h>
+#include <stdlib/ringbuf.h>
 
 typedef struct {
     uint32_t LPUART_CR1;
@@ -23,17 +23,17 @@ typedef struct {
 } LPUART;
 
 typedef struct {
-    uint32_t baudrate:  20;
-    uint32_t presc:     4;
-    uint32_t wordlen:   2;
-    uint32_t clksrc:    2;
-    uint32_t stopbit:   2;
-    uint32_t fifomode:  1;
-    uint32_t interrupt: 1;
+    uint32_t baudrate       : 20;
+    uint32_t presc          : 4;
+    uint32_t wordlen        : 2;
+    uint32_t clksrc         : 2;
+    uint32_t stopbit        : 2;
+    uint32_t fifomode       : 1;
+    uint32_t interrupt      : 1;
 } LPUART_Config;
 
-#define LPUART      ((volatile LPUART*) 0x40008000U)
-#define LPUART_IRQn 91
+#define LPUART              ((volatile LPUART*) 0x40008000U)
+#define LPUART_IRQn         91
 
 /* bit positions for registers */
 #define LPUART_CR1_RXFFIE_POS               31
@@ -166,29 +166,14 @@ typedef enum {
 } LPUART_Presc;
 
 LPUART_Config lpuart_config;
-volatile uint8_t lpuart_txbuf[256];
-volatile uint8_t lpuart_rxbuf[256];
-volatile uint16_t lpuart_txbuf_wptr = 0;
-volatile uint16_t lpuart_txbuf_rptr = 0;
+volatile Ring_Buffer lpuart_tx_ringbuf;
+volatile Ring_Buffer lpuart_rx_ringbuf;
 
 void LPUART1_IRQHandler(void) {
     if (TST_BIT(LPUART->LPUART_ISR, LPUART_ISR_TXE_POS)) {
-        if (lpuart_txbuf_rptr < lpuart_txbuf_wptr) {
-            LPUART->LPUART_TDR = lpuart_txbuf[lpuart_txbuf_rptr & 0xFFU];
-            lpuart_txbuf_rptr += 1;
-        } else {
+        if (ringbuf_pop(&lpuart_tx_ringbuf, &(LPUART->LPUART_TDR), 1) == 0)
             CLR_BIT(LPUART->LPUART_CR1, LPUART_CR1_TXEIE_POS);
-        }
     }
-
-    /*
-       if (TST_BIT(LPUART->LPUART_ISR, LPUART_ISR_TC_POS)) {
-       if (lpuart_txbuf_rptr == lpuart_txbuf_wptr) {
-       CLR_BIT(LPUART->LPUART_CR1, LPUART_CR1_TXEIE_POS);
-       SET_BIT(LPUART->LPUART_ICR, LPUART_ICR_TCCF_POS);
-       }
-       }
-       */
 }
 
 __inline void enable_lpuart_clock(void) {
@@ -250,6 +235,10 @@ __inline void lpuart_send_idle_frame(void) {
     SET_BIT(LPUART->LPUART_CR1, LPUART_CR1_TE_POS);
 }
 
+__inline void enable_lpuart_rx(void) {
+    SET_BIT(LPUART->LPUART_CR1, LPUART_CR1_RE_POS);
+}
+
 __inline void enable_lpuart_irq(void) {
     enable_IRQn(LPUART_IRQn);
 }
@@ -272,21 +261,21 @@ __inline void init_lpuart(const LPUART_Config config) {
     lpuart_send_idle_frame();
     if (config.interrupt)
         enable_lpuart_irq();
+
+    lpuart_tx_ringbuf = init_ringbuf();
+    lpuart_rx_ringbuf = init_ringbuf();
+
+    //enalbe RX fifo not empty interrupt
+    SET_BIT(LPUART->LPUART_CR1, LPUART_CR1_RXFNEIE_POS);
 }
 
 __inline uint8_t lpuart_tx_async(const uint8_t *data, const uint8_t len) {
-    uint8_t i = 0;
-    while (i < len) { 
-        if (lpuart_txbuf_wptr > lpuart_txbuf_rptr + 255)
-            break;
-        lpuart_txbuf[lpuart_txbuf_wptr & 0xFFU] = data[i++];
-        lpuart_txbuf_wptr += 1;
-    }
+    uint8_t bytes_transmitted = ringbuf_push(&lpuart_tx_ringbuf, data, len);
 
     // fire tx interrupt.
     SET_BIT(LPUART->LPUART_CR1, LPUART_CR1_TXEIE_POS);
 
-    return i;
+    return bytes_transmitted;
 }
 
 __inline uint8_t lpuart_tx_sync(const uint8_t *data, const uint8_t len) {
